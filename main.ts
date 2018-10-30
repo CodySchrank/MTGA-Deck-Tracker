@@ -1,6 +1,10 @@
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import { Tail } from 'tail';
+import { fstat } from 'fs';
+import { readline } from 'linebyline';
+import { isDev } from 'electron-is-dev';
 
 let win, serve;
 const args = process.argv.slice(1);
@@ -18,6 +22,54 @@ function createWindow() {
         width: size.width / 2,
         height: size.height / 2
     });
+
+    // const window = new BrowserWindow({
+    //     width: 200,
+    //     height: 200,
+    //     resizable: false,
+    //     movable: false,
+    //     focusable: false,
+    //     alwaysOnTop: true,
+    //     show: false,
+    //   });
+
+
+    let logUri = "";
+
+    if(isDev) {
+        console.log("Using Local output_log");
+        logUri="./output_log.txt"
+    } else {
+        console.log("Using Game output_log");
+        if (process.platform === 'win32') {
+            logUri = process.env.APPDATA.replace(
+                'Roaming',
+                'LocalLow\\Wizards Of The Coast\\MTGA\\output_log.txt'
+            );
+        } else {
+            // Path for Wine, could change depending on installation method
+            logUri =
+                process.env.HOME +
+                '/.wine/drive_c/user/' +
+                process.env.USER +
+                '/AppData/LocalLow/Wizards of the Coast/MTGA/output_log.txt';
+        }
+    }
+
+    // const options = { fromBeginning: true, fsWatchOptions: {}, follow: true }
+    // const tail = new Tail(logUri, options);
+
+    console.log("--------------------------------------------------------------------------------------------------");
+    console.log(`Reading Log ${logUri}`);
+    console.log("--------------------------------------------------------------------------------------------------");
+
+    const decklists = "<== Deck.GetDeckLists";
+    
+    var log = readline(logUri);
+
+    log.on("line", (line) => {
+        console.log("p")
+    })
 
     if (serve) {
         require('electron-reload')(__dirname, {
