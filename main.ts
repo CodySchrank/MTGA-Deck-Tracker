@@ -3,8 +3,7 @@ import * as path from 'path';
 import * as url from 'url';
 import { Tail } from 'tail';
 import { fstat } from 'fs';
-import { readline } from 'linebyline';
-import { isDev } from 'electron-is-dev';
+const isDev = require('electron-is-dev');
 
 let win, serve;
 const args = process.argv.slice(1);
@@ -56,20 +55,9 @@ function createWindow() {
         }
     }
 
-    // const options = { fromBeginning: true, fsWatchOptions: {}, follow: true }
-    // const tail = new Tail(logUri, options);
-
-    console.log("--------------------------------------------------------------------------------------------------");
-    console.log(`Reading Log ${logUri}`);
     console.log("--------------------------------------------------------------------------------------------------");
 
     const decklists = "<== Deck.GetDeckLists";
-    
-    var log = readline(logUri);
-
-    log.on("line", (line) => {
-        console.log("p")
-    })
 
     if (serve) {
         require('electron-reload')(__dirname, {
