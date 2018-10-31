@@ -28,8 +28,8 @@
         "no-empty": false,
         "interface-name": false,
         "no-trailing-whitespace": false,
-        "no-conditional-assignment": true,
-        "no-consecutive-blank-lines": false,
+        "no-conditional-assignment": false,
+        "no-consecutive-blank-lines": false
     },
     "jsRules": {
         "max-line-length": {

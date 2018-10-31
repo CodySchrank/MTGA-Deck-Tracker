@@ -1,16 +1,20 @@
+import { DeckService } from './services/DeckService/DeckService';
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { Tail } from 'tail';
-import { fstat } from 'fs';
-const isDev = require('electron-is-dev');
+import { LogReader } from "./services/LogReader/LogReader";
 
 let win, serve;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
 
-function createWindow() {
+const logReader = new LogReader();
+logReader.readDeckLists();
 
+const deckService = new DeckService();
+const updateDecks = deckService.updateDecks(logReader.decks);
+
+function createWindow() {
     const electronScreen = screen;
     const size = electronScreen.getPrimaryDisplay().workAreaSize;
 
@@ -31,33 +35,6 @@ function createWindow() {
     //     alwaysOnTop: true,
     //     show: false,
     //   });
-
-
-    let logUri = "";
-
-    if(isDev) {
-        console.log("Using Local output_log");
-        logUri="./output_log.txt"
-    } else {
-        console.log("Using Game output_log");
-        if (process.platform === 'win32') {
-            logUri = process.env.APPDATA.replace(
-                'Roaming',
-                'LocalLow\\Wizards Of The Coast\\MTGA\\output_log.txt'
-            );
-        } else {
-            // Path for Wine, could change depending on installation method
-            logUri =
-                process.env.HOME +
-                '/.wine/drive_c/user/' +
-                process.env.USER +
-                '/AppData/LocalLow/Wizards of the Coast/MTGA/output_log.txt';
-        }
-    }
-
-    console.log("--------------------------------------------------------------------------------------------------");
-
-    const decklists = "<== Deck.GetDeckLists";
 
     if (serve) {
         require('electron-reload')(__dirname, {

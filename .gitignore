@@ -8,6 +8,8 @@
 /release
 main.js
 src/**/*.js
+services/**/*.js
+models/**/*.js
 *.js.map
 
 # dependencies
