@@ -20,7 +20,10 @@
   },
   "include": [
     "main.ts",
-    "src/**/*"
+    "src/**/*",
+    "services/**/*",
+    "inject/**/*",
+    "models/**/*"
   ],
   "exclude": [
     "node_modules"

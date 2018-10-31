@@ -1,15 +1,17 @@
-import { DeckService } from './services/DeckService/DeckService';
+import { ILogReader } from './services/LogReader/ILogReader';
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
-import { LogReader } from "./services/LogReader/LogReader";
+import { TYPES } from './inject/TYPES';
+import { IDeckService } from './services/DeckService/IDeckService';
+import container from './inject/inversify.config';
 
 let win, serve;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
 
-const logReader = new LogReader();
-const deckService = new DeckService();
+const logReader = container.get<ILogReader>(TYPES.ILogReader);
+const deckService = container.get<IDeckService>(TYPES.IDeckService);
 
 function createWindow() {
     init();
@@ -59,8 +61,8 @@ function createWindow() {
 }
 
 function init() {
-    logReader.readDeckLists();
-    deckService.updateDecks(logReader.decks);
+    // logReader.readDeckLists();
+    // deckService.updateDecks(logReader.decks);
 }
 
 try {
