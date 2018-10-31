@@ -4,7 +4,6 @@ import * as isDev from "electron-is-dev";
 import * as _ from "underscore";
 import * as lineByLine from "n-readlines";
 
-
 export class LogReader {
     logUri: string = "";
     log: string[] = [];

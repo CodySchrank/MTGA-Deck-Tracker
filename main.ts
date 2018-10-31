@@ -9,12 +9,11 @@ const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
 
 const logReader = new LogReader();
-logReader.readDeckLists();
-
 const deckService = new DeckService();
-const updateDecks = deckService.updateDecks(logReader.decks);
 
 function createWindow() {
+    init();
+
     const electronScreen = screen;
     const size = electronScreen.getPrimaryDisplay().workAreaSize;
 
@@ -57,7 +56,11 @@ function createWindow() {
         // when you should delete the corresponding element.
         win = null;
     });
+}
 
+function init() {
+    logReader.readDeckLists();
+    deckService.updateDecks(logReader.decks);
 }
 
 try {
