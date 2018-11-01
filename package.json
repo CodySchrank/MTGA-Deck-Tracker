@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Magic The Gathering Deck Tracker",
   "main": "main.js",
+  "author": {
+      "name": "Cody Schrank"
+  },
   "scripts": {
     "postinstall": "npm run postinstall:electron && npx electron-builder install-app-deps",
     "postinstall:web": "node postinstall-web",

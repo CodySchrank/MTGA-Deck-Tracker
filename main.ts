@@ -14,8 +14,6 @@ const deckService = container.get<IDeckService>(TYPES.IDeckService);
 
 const currentDecks = deckService.getLocalDecks();
 
-console.log(currentDecks[1]);
-
 function createWindow() {
     init();
 
