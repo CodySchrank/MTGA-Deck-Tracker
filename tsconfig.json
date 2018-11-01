@@ -2,7 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "outDir": "./dist/out-tsc",
-    "sourceMap": true,
+    "inlineSourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
@@ -20,10 +20,7 @@
   },
   "include": [
     "main.ts",
-    "src/**/*",
-    "services/**/*",
-    "inject/**/*",
-    "models/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules"

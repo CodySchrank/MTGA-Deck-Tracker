@@ -1,4 +1,8 @@
-export class BasicService {
+import { IBasicService } from './IBasicService';
+import { injectable } from "inversify";
+
+@injectable()
+export class BasicService implements IBasicService {
     public baseUrl: string;
 
     constructor() {

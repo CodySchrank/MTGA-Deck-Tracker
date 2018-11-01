@@ -1,3 +1,4 @@
+import { IDeckService } from './IDeckService';
 import { ILogReader } from './../LogReader/ILogReader';
 import { BasicService } from './../BasicService/BasicService';
 import { Deck } from '../../models/Deck/Deck';
@@ -6,7 +7,7 @@ import { injectable, inject } from 'inversify';
 import { TYPES } from '../../inject/TYPES';
 
 @injectable()
-export class DeckService extends BasicService {
+export class DeckService extends BasicService implements IDeckService {
     private decks: Deck[];
     private deckUrl: string;
     private logReader: ILogReader;

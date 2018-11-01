@@ -1,12 +1,11 @@
-import { Deck } from './../../models/Deck/Deck';
-import * as fs from "fs";
+import { ILogReader } from './ILogReader';
 import * as isDev from "electron-is-dev";
 import * as _ from "underscore";
-import * as lineByLine from "n-readlines";
-import { inject, injectable, named } from "inversify";
+import { injectable } from "inversify";
+const linebyline = require('n-readlines');
 
 @injectable()
-export class LogReader {
+export class LogReader implements ILogReader {
     public log: string[] = [];
     private logUri: string = "";
 
@@ -17,10 +16,11 @@ export class LogReader {
     public refreshLog() {
         this.log = [];
 
-        const liner = new lineByLine(this.logUri);  //syncronous
+        const liner = new linebyline(this.logUri);  //syncronous
 
         let line: string;
 
+        //@ts-ignore
         while (line = liner.next()) {
             const str = (line.toString()).replace(/[\n\r]+/g, ''); //removes CR and newline
             if (!this.isNullOrEmpty(str)) {

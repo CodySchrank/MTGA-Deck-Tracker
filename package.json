@@ -65,6 +65,7 @@
     "protractor": "5.4.1",
     "reflect-metadata": "^0.1.12",
     "request": "^2.88.0",
+    "rimraf": "^2.6.2",
     "rxjs": "6.3.3",
     "tail": "^2.0.1",
     "ts-node": "7.0.1",
