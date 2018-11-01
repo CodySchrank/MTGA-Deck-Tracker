@@ -21,26 +21,28 @@ export class DeckService extends BasicService implements IDeckService {
         this.deckUrl = this.baseUrl + "/api/decks";
     }
 
-    // public updateLocalDecks() {
-    //     this.refreshLog()
+    public updateLocalDecks() {
+        this.logReader.refreshLog()
 
-    //     const indecies = [];
+        const indecies = [];
 
-    //     this.log.forEach((val, index) => {
-    //         if (val.includes(this.deckListsString)) {
-    //             indecies.push(index);
-    //         }
-    //     })
+        this.logReader.log.forEach((val, index) => {
+            if (val.includes(this.deckListsString)) {
+                indecies.push(index);
+            }
+        })
 
-    //     //Get most recent deck list, if it exists
-    //     if(indecies.length != 0 ) {
-    //         try {
-    //             this.decks = this.parseBlock<Deck[]>(indecies[indecies.length - 1]);
-    //             console.log(`Updated deck list (${this.decks.length})`);
-    //         } catch {
-    //         }
-    //     }
-    // }
+        //Get most recent deck list, if it exists
+        if(indecies.length != 0 ) {
+            try {
+                this.decks = this.logReader.parseBlock<Deck[]>(indecies[indecies.length - 1]);
+                console.log(`Updated deck list (${this.decks.length})`);
+            } catch(e) {
+                //log is probably just incomplete
+                console.error(e)
+            }
+        }
+    }
 
     public updateRemoteDecks() {
         request.put(this.deckUrl).form(this.decks).on("response", res => {

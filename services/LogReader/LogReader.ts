@@ -29,32 +29,7 @@ export class LogReader implements ILogReader {
         }
     }
 
-    private initLog() {
-        if (isDev) {
-            console.log("Using Local output_log");
-            this.logUri = "./output_log.txt"
-        } else {
-            console.log("Using Game output_log");
-            if (process.platform === 'win32') {
-                this.logUri = process.env.APPDATA.replace(
-                    'Roaming',
-                    'LocalLow\\Wizards Of The Coast\\MTGA\\output_log.txt'
-                );
-            } else {
-                console.log("No Systems match.  Guessing Wine output_log");
-                // Path for Wine, could change depending on installation method
-                this.logUri =
-                    process.env.HOME +
-                    '/.wine/drive_c/user/' +
-                    process.env.USER +
-                    '/AppData/LocalLow/Wizards of the Coast/MTGA/output_log.txt';
-            }
-        }
-
-        this.refreshLog();
-    }
-
-    private parseBlock<T>(index: number): T {
+    public parseBlock<T>(index: number): T {
         index += 1; //we dont care about the header
 
         let breaker = this.log[index];
@@ -85,6 +60,31 @@ export class LogReader implements ILogReader {
         }
 
         return JSON.parse(block.join("\n")) as T;
+    }
+
+    private initLog() {
+        if (isDev) {
+            console.log("Using Local output_log");
+            this.logUri = "./output_log.txt"
+        } else {
+            console.log("Using Game output_log");
+            if (process.platform === 'win32') {
+                this.logUri = process.env.APPDATA.replace(
+                    'Roaming',
+                    'LocalLow\\Wizards Of The Coast\\MTGA\\output_log.txt'
+                );
+            } else {
+                console.log("No Systems match.  Guessing Wine output_log");
+                // Path for Wine, could change depending on installation method
+                this.logUri =
+                    process.env.HOME +
+                    '/.wine/drive_c/user/' +
+                    process.env.USER +
+                    '/AppData/LocalLow/Wizards of the Coast/MTGA/output_log.txt';
+            }
+        }
+
+        this.refreshLog();
     }
 
     private isNullOrEmpty(str: string) {

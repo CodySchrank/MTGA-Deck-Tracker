@@ -10,8 +10,8 @@ let win, serve;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
 
-const logReader = container.get<ILogReader>(TYPES.ILogReader);
 const deckService = container.get<IDeckService>(TYPES.IDeckService);
+
 
 function createWindow() {
     init();
