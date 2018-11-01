@@ -8,7 +8,7 @@ import { TYPES } from '../../inject/TYPES';
 
 @injectable()
 export class DeckService extends BasicService implements IDeckService {
-    private decks: Deck[];
+    private decks: Deck[] = [];
     private deckUrl: string;
     private logReader: ILogReader;
 
@@ -21,7 +21,7 @@ export class DeckService extends BasicService implements IDeckService {
         this.deckUrl = this.baseUrl + "/api/decks";
     }
 
-    public updateLocalDecks() {
+    public getLocalDecks() {
         this.logReader.refreshLog()
 
         const indecies = [];
@@ -42,6 +42,8 @@ export class DeckService extends BasicService implements IDeckService {
                 console.error(e)
             }
         }
+
+        return this.decks;
     }
 
     public updateRemoteDecks() {
