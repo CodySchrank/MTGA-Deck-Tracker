@@ -1,3 +1,5 @@
+import { SaveDeckResource } from './resources/Deck/SaveDeckResource';
+import { UserService } from './services/UserService/UserService';
 import { ILogReader } from './services/LogReader/ILogReader';
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
@@ -5,14 +7,14 @@ import * as url from 'url';
 import { TYPES } from './inject/TYPES';
 import { IDeckService } from './services/DeckService/IDeckService';
 import container from './inject/inversify.config';
+import { IUserService } from './services/UserService/IUserService';
 
 let win, serve;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
 
 const deckService = container.get<IDeckService>(TYPES.IDeckService);
-
-const currentDecks = deckService.getLocalDecks();
+const userService = container.get<IUserService>(TYPES.IUserService);
 
 function createWindow() {
     init();
@@ -62,12 +64,23 @@ function createWindow() {
 }
 
 function init() {
-    // logReader.readDeckLists();
-    // deckService.updateDecks(logReader.decks);
+    const currentDecks = deckService.getLocalDecks();
+
+    // userService.login({username: "cody", password: "monkey571"}).then(() => {
+        const deck = currentDecks[0];
+
+        console.log(deck);
+
+        // userService.addDeck(deck).then(res => {
+        //     console.log("Added a deck!");
+        //     console.log(res);
+        // }).catch(err => {
+        //     console.log(err);
+        // })
+    // });
 }
 
 try {
-
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.

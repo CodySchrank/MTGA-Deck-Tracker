@@ -4,7 +4,7 @@
   "description": "Magic The Gathering Deck Tracker",
   "main": "main.js",
   "author": {
-      "name": "Cody Schrank"
+    "name": "Cody Schrank"
   },
   "scripts": {
     "postinstall": "npm run postinstall:electron && npx electron-builder install-app-deps",
@@ -74,7 +74,6 @@
     "promise-throttle": "^1.0.0",
     "protractor": "5.4.1",
     "reflect-metadata": "^0.1.12",
-    "request": "^2.88.0",
     "rimraf": "^2.6.2",
     "rxjs": "6.3.3",
     "tail": "^2.0.1",
@@ -86,5 +85,10 @@
     "wait-on": "3.1.0",
     "webdriver-manager": "12.1.0",
     "zone.js": "0.8.26"
+  },
+  "dependencies": {
+    "@types/needle": "^2.0.2",
+    "@types/request-promise": "^4.1.42",
+    "request-promise": "^4.2.2"
   }
 }
