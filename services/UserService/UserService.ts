@@ -1,6 +1,5 @@
 import { SaveDeckResource } from './../../resources/Deck/SaveDeckResource';
 import { LoginResource } from './../../resources/User/LoginResource';
-import { ILogReader } from './../LogReader/ILogReader';
 import { BasicService } from './../BasicService/BasicService';
 import { Deck } from '../../models/Deck/Deck';
 import { injectable, inject } from 'inversify';
@@ -11,13 +10,11 @@ import { SaveDeckCardResource } from '../../resources/Deck/SaveDeckCardResource'
 @injectable()
 export class UserService extends BasicService implements IUserService {
     private userUrl: string;
-    private logReader: ILogReader;
     private auth_token: string;
 
-    constructor(@inject(TYPES.ILogReader) logReader: ILogReader) {
+    constructor() {
         super();
 
-        this.logReader = logReader;
         this.userUrl = this.baseUrl + "/api/users";
     }
 
@@ -36,32 +33,63 @@ export class UserService extends BasicService implements IUserService {
         }));
     }
 
-    public addDeck(deck: Deck): Promise<{}> {
-        return new Promise((resolve) => {
-            const newDeck: SaveDeckResource = {
-                arenaDeckId: deck.id,
-                name: deck.name,
-                format: deck.format,
-                deckTileId: deck.deckTileId,
-                mainDeck: deck.mainDeck.map(x => {
-                    return {
-                        arenaId: parseInt(x.id),
-                        quantity: x.quantity
-                    };
-                }),
-                sideBoard: deck.sideboard.map(x => {
-                    return {
-                        arenaId: parseInt(x.id),
-                        quantity: x.quantity
-                    };
-                })
-            }
+    public addDeckToRemote(deck: Deck): Promise<{}> {
+        const saveDeck = this.convertDeckToSave(deck);
 
-            return this.addDeckToRemote(newDeck).then(resolve);
+        return new Promise((resolve) => {
+            return this.sendAddDeckRequest(saveDeck).then(resolve);
         });
     }
 
-    public addDeckToRemote(body: SaveDeckResource): Promise<{}> {
+    public addDecksToRemote(decks: Deck[]): Promise<{}> {
+        const saveDecks: SaveDeckResource[] = [];
+
+        decks.forEach(deck => {
+            const newSaveDeck = this.convertDeckToSave(deck);
+            saveDecks.push(newSaveDeck);
+        });
+
+        return new Promise( (resolve) => {
+            return this.sendAddDecksRequest(saveDecks).then(resolve);
+        });
+    }
+
+    private convertDeckToSave(deck: Deck): SaveDeckResource {
+        const newDeck: SaveDeckResource = {
+            arenaDeckId: deck.id,
+            name: deck.name,
+            format: deck.format,
+            deckTileId: deck.deckTileId,
+            mainDeck: deck.mainDeck.map(x => {
+                return {
+                    arenaId: parseInt(x.id),
+                    quantity: x.quantity
+                };
+            }),
+            sideBoard: deck.sideboard.map(x => {
+                return {
+                    arenaId: parseInt(x.id),
+                    quantity: x.quantity
+                };
+            })
+        }
+
+        return newDeck
+    }
+
+    private sendAddDeckRequest(body: SaveDeckResource): Promise<{}> {
+        return new Promise((resolve) => this.req({
+            method: 'POST',
+            uri: `${this.userUrl}/user/deck/mtga`,
+            auth: {
+                bearer: this.auth_token
+            },
+            body: body,
+            json: true
+        }).then(resolve));
+    }
+
+    private sendAddDecksRequest(body: SaveDeckResource[]): Promise<{}> {
         return new Promise((resolve) => this.req({
             method: 'POST',
             uri: `${this.userUrl}/user/decks/mtga`,

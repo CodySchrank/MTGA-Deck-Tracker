@@ -38,8 +38,13 @@ export class DeckService extends BasicService implements IDeckService {
                 this.decks = this.logReader.parseBlock<Deck[]>(indecies[indecies.length - 1]);
                 console.log(`Updated deck list (${this.decks.length})`);
             } catch(e) {
-                //log is probably just incomplete
-                console.error(e)
+                try {
+                    this.decks = this.logReader.parseBlock<Deck[]>(indecies[indecies.length - 2]);
+                    console.log(`Updated deck list (${this.decks.length})`);
+                } catch(e) {
+                    //Log is incomplete/corrupt
+                    console.log(`Could not update deck list`);
+                }
             }
         }
 

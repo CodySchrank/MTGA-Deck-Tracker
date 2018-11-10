@@ -4,6 +4,6 @@ import { Deck } from '../../models/Deck/Deck';
 
 export interface IUserService {
     login(body: LoginResource): Promise<{}>;
-    addDeck(deck: Deck): Promise<{}>;
-    addDeckToRemote(body: SaveDeckResource): Promise<{}>;
+    addDeckToRemote(deck: Deck): Promise<{}>;
+    addDecksToRemote(decks: Deck[]): Promise<{}>;
 }

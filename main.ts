@@ -66,18 +66,13 @@ function createWindow() {
 function init() {
     const currentDecks = deckService.getLocalDecks();
 
-    // userService.login({username: "cody", password: "monkey571"}).then(() => {
-        const deck = currentDecks[0];
+    userService.login({username: "cody", password: "monkey571"}).then(() => {
+        console.log("Updating decks in background");
 
-        console.log(deck);
-
-        // userService.addDeck(deck).then(res => {
-        //     console.log("Added a deck!");
-        //     console.log(res);
-        // }).catch(err => {
-        //     console.log(err);
-        // })
-    // });
+        userService.addDecksToRemote(currentDecks).then(() => {
+            console.log("Updated decks in background");
+        })
+    });
 }
 
 try {

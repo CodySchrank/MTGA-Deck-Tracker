@@ -1,11 +1,17 @@
+import { Config } from './../../config';
 import { ILogReader } from './ILogReader';
 import * as isDev from "electron-is-dev";
 import * as _ from "underscore";
 import { injectable } from "inversify";
+const config: Config = require("./../../config.json");
 const linebyline = require('n-readlines');
+const sizeof = require('object-sizeof');
 
 @injectable()
 export class LogReader implements ILogReader {
+    /**
+     *  Log Reader should not be injected more than a couple times
+     */
     public log: string[] = [];
     private logUri: string = "";
 
@@ -27,6 +33,8 @@ export class LogReader implements ILogReader {
                 this.log.push(str);
             }
         }
+
+        console.log(`Updated log, sizeof: ${sizeof(this.log)} bytes, length: ${this.log.length} lines`);
     }
 
     public parseBlock<T>(index: number): T {
@@ -63,7 +71,7 @@ export class LogReader implements ILogReader {
     }
 
     private initLog() {
-        if (isDev) {
+        if (config.UseLocalOutputFile) {
             console.log("Using Local output_log");
             this.logUri = "./output_log.txt"
         } else {
@@ -83,8 +91,6 @@ export class LogReader implements ILogReader {
                     '/AppData/LocalLow/Wizards of the Coast/MTGA/output_log.txt';
             }
         }
-
-        this.refreshLog();
     }
 
     private isNullOrEmpty(str: string) {
