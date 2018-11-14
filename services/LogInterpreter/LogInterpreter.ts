@@ -1,6 +1,4 @@
-import { SaveDeckResource } from './../../resources/Deck/SaveDeckResource';
 import { ILogReader } from './../LogReader/ILogReader';
-import { BasicService } from './../BasicService/BasicService';
 import { Deck } from '../../models/Deck/Deck';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../inject/TYPES';
@@ -16,7 +14,7 @@ export class LogInterpreter implements ILogInterpreter {
     private userIdString = "==> Log.Info";
 
     constructor(@inject(TYPES.ILogReader) logReader: ILogReader) {
-        this.logReader = logReader;  //this is the deck service's log reader
+        this.logReader = logReader;
     }
 
     public getUserId(): Promise<string> {
