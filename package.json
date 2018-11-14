@@ -90,6 +90,7 @@
   "dependencies": {
     "@types/needle": "^2.0.2",
     "@types/request-promise": "^4.1.42",
+    "line-by-line": "^0.1.6",
     "request-promise": "^4.2.2"
   }
 }

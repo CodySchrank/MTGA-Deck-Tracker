@@ -1,6 +1,6 @@
 import { Deck } from "../../models/Deck/Deck";
 
 export interface ILogInterpreter {
-    getLocalDecks(): Deck[];
+    getLocalDecks(): Promise<Deck[]>;
     // getUserId(): string;
 }

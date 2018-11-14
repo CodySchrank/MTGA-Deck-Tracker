@@ -1,6 +1,6 @@
 export interface ILogReader {
-    log: string[],
-    refreshLog(): void;
+    log: string[];
+    getParsedLog(): Promise<{}>;
     clearLog(): void;
     parseBlock<T>(index: number): T;
 }

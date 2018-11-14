@@ -3,8 +3,9 @@ import { ILogReader } from './ILogReader';
 import * as isDev from "electron-is-dev";
 import * as _ from "underscore";
 import { injectable } from "inversify";
+const rl = require("readline");
+const fs = require('fs');
 const config: Config = require("./../../config.json");
-const linebyline = require('n-readlines');
 const sizeof = require('object-sizeof');
 
 @injectable()
@@ -19,31 +20,40 @@ export class LogReader implements ILogReader {
         this.initLog();
     }
 
-    public refreshLog() {
-        console.time("refreshLog");
-        this.log = [];
+    public getParsedLog(): Promise<string[]> {
+        return new Promise( (resolve, reject) => {
+            console.time("refreshLog");
+            this.log = [];
 
-        const liner = new linebyline(this.logUri);  //syncronous
+            const lineReader = rl.createInterface({
+                input: fs.createReadStream(this.logUri)
+            });
 
-        let line: string;
+            lineReader.on("error", (err) => {
+                this.log = [];
+                resolve();
+            })
 
-        //@ts-ignore
-        while (line = liner.next()) {
-            const str = (line.toString()).replace(/[\n\r]+/g, ''); //removes CR and newline
-            if (!this.isNullOrEmpty(str)) {
-                this.log.push(str);
-            }
-        }
+            lineReader.on('line', (line) => {
+                const str = (line.toString()).replace(/[\n\r]+/g, ''); //removes CR and newline
+                if (!this.isNullOrEmpty(str)) {
+                    this.log.push(str);
+                }
+            });
 
-        console.log(`Updated log, sizeof: ${sizeof(this.log)} bytes, length: ${this.log.length} lines`);
-        console.timeEnd("refreshLog");
+            lineReader.on('close', () => {
+                console.log(`Updated log, sizeof: ${sizeof(this.log)} bytes, length: ${this.log.length} lines`);
+                console.timeEnd("refreshLog");
+                resolve();
+            })
+        });
     }
 
-    public clearLog() {
+    clearLog() {
         this.log = [];
     }
 
-    public parseBlock<T>(index: number): T {
+    parseBlock<T>(index: number): T {
         index += 1; //we dont care about the header
 
         let breaker = this.log[index];

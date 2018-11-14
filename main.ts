@@ -63,16 +63,13 @@ function createWindow() {
     });
 }
 
-function init() {
-    const currentDecks = logInterpreter.getLocalDecks();
+async function init() {
+    //NOTE:  First deck run is slow
+    const currentDecks = await logInterpreter.getLocalDecks();
 
-    userService.login({username: "cody", password: "monkey571"}).then(() => {
-        console.log("Updating decks in background");
+    await userService.login({username: "cody", password: "monkey571"});
 
-        userService.addDecksToRemote(currentDecks).then(() => {
-            console.log("Updated decks in background");
-        })
-    });
+    await userService.addDecksToRemote(currentDecks);
 }
 
 try {

@@ -37,7 +37,9 @@ export class UserService extends BasicService implements IUserService {
         const saveDeck = this.convertDeckToSave(deck);
 
         return new Promise((resolve) => {
-            return this.sendAddDeckRequest(saveDeck).then(resolve);
+            return this.sendAddDeckRequest(saveDeck).then(resolve).then(() => {
+                console.log("Updated decks in the background");
+            });
         });
     }
 
@@ -50,7 +52,9 @@ export class UserService extends BasicService implements IUserService {
         });
 
         return new Promise( (resolve) => {
-            return this.sendAddDecksRequest(saveDecks).then(resolve);
+            return this.sendAddDecksRequest(saveDecks).then(resolve).then(() => {
+                console.log("Updated decks in the background");
+            });
         });
     }
 

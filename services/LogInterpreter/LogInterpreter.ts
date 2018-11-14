@@ -22,34 +22,38 @@ export class LogInterpreter implements ILogInterpreter {
 
     }
 
-    public getLocalDecks(): Deck[] {
-        this.logReader.refreshLog()
+    public getLocalDecks(): Promise<Deck[]> {
+        return new Promise( async (resolve, reject) => {
+            await this.logReader.getParsedLog()
 
-        const indecies = [];
+            const indecies = [];
 
-        this.logReader.log.forEach((val, index) => {
-            if (val.includes(this.deckListsString)) {
-                indecies.push(index);
-            }
-        })
+            this.logReader.log.forEach((val, index) => {
+                if (val.includes(this.deckListsString)) {
+                    indecies.push(index);
+                }
+            })
 
-        //Get most recent deck list, if it exists
-        if(indecies.length != 0 ) {
-            try {
-                this.decks = this.logReader.parseBlock<Deck[]>(indecies[indecies.length - 1]);
-                console.log(`Updated deck list (${this.decks.length})`);
-            } catch(e) {
+            //Get most recent deck list, if it exists
+            if(indecies.length != 0 ) {
                 try {
-                    this.decks = this.logReader.parseBlock<Deck[]>(indecies[indecies.length - 2]);
+                    this.decks = this.logReader.parseBlock<Deck[]>(indecies[indecies.length - 1]);
                     console.log(`Updated deck list (${this.decks.length})`);
                 } catch(e) {
-                    //Log is incomplete/corrupt
-                    console.log(`Could not update deck list`);
+                    try {
+                        this.decks = this.logReader.parseBlock<Deck[]>(indecies[indecies.length - 2]);
+                        console.log(`Updated deck list (${this.decks.length})`);
+                    } catch(e) {
+                        //Log is incomplete/corrupt
+                        console.log(`Could not update deck list`);
+                    }
                 }
             }
-        }
 
-        return this.decks;
+            this.logReader.clearLog();
+
+            resolve(this.decks);
+        })
     }
 
 }
