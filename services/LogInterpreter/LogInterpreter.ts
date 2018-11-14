@@ -9,6 +9,7 @@ import { ILogInterpreter } from './ILogInterpreter';
 @injectable()
 export class LogInterpreter implements ILogInterpreter {
     public decks: Deck[] = [];
+    public userId: string = "";
     private logReader: ILogReader;
 
     private deckListsString = "<== Deck.GetDeckLists";
@@ -18,18 +19,46 @@ export class LogInterpreter implements ILogInterpreter {
         this.logReader = logReader;  //this is the deck service's log reader
     }
 
-    public getUserId() {
+    public getUserId(): Promise<string> {
+        return new Promise( (resolve, reject) => {
+            return this.interpret<any>({}, this.userIdString).then( (logObj) => {
+                console.log(`Updated User Id`);
+                const id = logObj.params.payloadObject.playerId;
 
+                if(id != null) {
+                    this.userId = id;
+                }
+
+                console.log(`User Id: ${this.userId}`);
+
+                resolve(this.userId);
+            }).catch( (err) => {
+                console.log("Could not update deck list");
+                reject();
+            })
+        })
     }
 
     public getLocalDecks(): Promise<Deck[]> {
+        return new Promise( (resolve, reject) => {
+            return this.interpret<Deck[]>(this.decks, this.deckListsString).then( (decks) => {
+                console.log(`Updated Deck List ${decks.length}`);
+                resolve(decks);
+            }).catch( (err) => {
+                console.log("Could not update deck list");
+                reject();
+            })
+        })
+    }
+
+    private interpret<T>(ref: T, include: string): Promise<T> {
         return new Promise( async (resolve, reject) => {
             await this.logReader.getParsedLog()
 
             const indecies = [];
 
             this.logReader.log.forEach((val, index) => {
-                if (val.includes(this.deckListsString)) {
+                if (val.includes(include)) {
                     indecies.push(index);
                 }
             })
@@ -37,22 +66,19 @@ export class LogInterpreter implements ILogInterpreter {
             //Get most recent deck list, if it exists
             if(indecies.length != 0 ) {
                 try {
-                    this.decks = this.logReader.parseBlock<Deck[]>(indecies[indecies.length - 1]);
-                    console.log(`Updated deck list (${this.decks.length})`);
+                    ref = this.logReader.parseBlock<T>(indecies[indecies.length - 1]);
                 } catch(e) {
                     try {
-                        this.decks = this.logReader.parseBlock<Deck[]>(indecies[indecies.length - 2]);
-                        console.log(`Updated deck list (${this.decks.length})`);
+                        ref = this.logReader.parseBlock<T>(indecies[indecies.length - 2]);
                     } catch(e) {
-                        //Log is incomplete/corrupt
-                        console.log(`Could not update deck list`);
+                        reject(e);
                     }
                 }
             }
 
             this.logReader.clearLog();
 
-            resolve(this.decks);
+            resolve(ref);
         })
     }
 
