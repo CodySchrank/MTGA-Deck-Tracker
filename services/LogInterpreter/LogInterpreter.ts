@@ -1,27 +1,28 @@
 import { SaveDeckResource } from './../../resources/Deck/SaveDeckResource';
-import { IDeckService } from './IDeckService';
 import { ILogReader } from './../LogReader/ILogReader';
 import { BasicService } from './../BasicService/BasicService';
 import { Deck } from '../../models/Deck/Deck';
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../inject/TYPES';
+import { ILogInterpreter } from './ILogInterpreter';
 
 @injectable()
-export class DeckService extends BasicService implements IDeckService {
-    private decks: Deck[] = [];
-    private deckUrl: string;
+export class LogInterpreter implements ILogInterpreter {
+    public decks: Deck[] = [];
     private logReader: ILogReader;
 
     private deckListsString = "<== Deck.GetDeckLists";
+    private userIdString = "==> Log.Info";
 
     constructor(@inject(TYPES.ILogReader) logReader: ILogReader) {
-        super();
-
-        this.logReader = logReader;
-        this.deckUrl = this.baseUrl + "/api/decks";
+        this.logReader = logReader;  //this is the deck service's log reader
     }
 
-    public getLocalDecks() {
+    public getUserId() {
+
+    }
+
+    public getLocalDecks(): Deck[] {
         this.logReader.refreshLog()
 
         const indecies = [];

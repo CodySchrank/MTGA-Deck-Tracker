@@ -20,6 +20,7 @@ export class LogReader implements ILogReader {
     }
 
     public refreshLog() {
+        console.time("refreshLog");
         this.log = [];
 
         const liner = new linebyline(this.logUri);  //syncronous
@@ -35,6 +36,11 @@ export class LogReader implements ILogReader {
         }
 
         console.log(`Updated log, sizeof: ${sizeof(this.log)} bytes, length: ${this.log.length} lines`);
+        console.timeEnd("refreshLog");
+    }
+
+    public clearLog() {
+        this.log = [];
     }
 
     public parseBlock<T>(index: number): T {

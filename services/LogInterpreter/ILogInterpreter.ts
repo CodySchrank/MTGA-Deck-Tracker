@@ -1,5 +1,6 @@
 import { Deck } from "../../models/Deck/Deck";
 
-export interface IDeckService {
+export interface ILogInterpreter {
     getLocalDecks(): Deck[];
+    // getUserId(): string;
 }

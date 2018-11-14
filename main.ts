@@ -1,3 +1,4 @@
+import { ILogInterpreter } from './services/LogInterpreter/ILogInterpreter';
 import { SaveDeckResource } from './resources/Deck/SaveDeckResource';
 import { UserService } from './services/UserService/UserService';
 import { ILogReader } from './services/LogReader/ILogReader';
@@ -5,7 +6,6 @@ import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 import { TYPES } from './inject/TYPES';
-import { IDeckService } from './services/DeckService/IDeckService';
 import container from './inject/inversify.config';
 import { IUserService } from './services/UserService/IUserService';
 
@@ -13,7 +13,7 @@ let win, serve;
 const args = process.argv.slice(1);
 serve = args.some(val => val === '--serve');
 
-const deckService = container.get<IDeckService>(TYPES.IDeckService);
+const logInterpreter = container.get<ILogInterpreter>(TYPES.ILogInterpreter);
 const userService = container.get<IUserService>(TYPES.IUserService);
 
 function createWindow() {
@@ -64,7 +64,7 @@ function createWindow() {
 }
 
 function init() {
-    const currentDecks = deckService.getLocalDecks();
+    const currentDecks = logInterpreter.getLocalDecks();
 
     userService.login({username: "cody", password: "monkey571"}).then(() => {
         console.log("Updating decks in background");
