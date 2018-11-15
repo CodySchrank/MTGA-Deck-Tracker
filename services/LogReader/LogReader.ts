@@ -64,12 +64,12 @@ export class LogReader implements ILogReader {
         });
     }
 
-    clear() {
+    public clear() {
         this.log = [];
         this.map.clear();
     }
 
-    parseBlock<T>(index: number): T {
+    public parseBlock<T>(index: number): T {
         let breaker = this.log[index];
 
         if (breaker == "{") {

@@ -22,6 +22,9 @@ export class LogInterpreter implements ILogInterpreter {
         this.logReader = logReader;
     }
 
+    /**
+     *  All access to the log should be wrapped in transaction
+     */
     public transaction(cb: Function) {
         setTimeout(async () => {
             console.log("Start Transaction")
@@ -73,6 +76,13 @@ export class LogInterpreter implements ILogInterpreter {
         await this.logReader.clear();
     }
 
+    /**
+     *
+     * @param ref The reference object to set (optional)
+     * @param include The string to search for in the log
+     *
+     * Returns a promise of the results expected from the search string
+     */
     private interpret<T>(ref: T, include: string): Promise<T> {
         return new Promise( async (resolve, reject) => {
             try {
