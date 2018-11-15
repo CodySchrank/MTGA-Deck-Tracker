@@ -8,30 +8,46 @@ import { ILogInterpreter } from './ILogInterpreter';
 export class LogInterpreter implements ILogInterpreter {
     public decks: Deck[] = [];
     public userId: string = "";
-    private logReader: ILogReader;
 
+    private logReader: ILogReader;
     private deckListsString = "<== Deck.GetDeckLists";
     private userIdString = "==> Log.Info";
+
+    private hashSet = [
+        this.deckListsString,
+        this.userIdString
+    ];
 
     constructor(@inject(TYPES.ILogReader) logReader: ILogReader) {
         this.logReader = logReader;
     }
 
+    public transaction(cb: Function) {
+        setTimeout(async () => {
+            console.log("Start Transaction")
+            await this.startTransaction()
+
+            await cb();
+
+            await this.endTransaction();
+            console.log("End Transaction")
+        }, 1);
+    }
+
     public getUserId(): Promise<string> {
         return new Promise( (resolve, reject) => {
             return this.interpret<any>({}, this.userIdString).then( (logObj) => {
-                console.log(`Updated User Id`);
                 const id = logObj.params.payloadObject.playerId;
 
                 if(id != null) {
                     this.userId = id;
                 }
 
-                console.log(`User Id: ${this.userId}`);
+                console.log(`Updated User Id ${this.userId}`);
 
                 resolve(this.userId);
             }).catch( (err) => {
-                console.log("Could not update deck list");
+                console.log("Could not update user id");
                 reject();
             })
         })
@@ -49,32 +65,22 @@ export class LogInterpreter implements ILogInterpreter {
         })
     }
 
+    private async startTransaction() {
+        await this.logReader.getParsedLog(this.hashSet);
+    }
+
+    private async endTransaction() {
+        await this.logReader.clear();
+    }
+
     private interpret<T>(ref: T, include: string): Promise<T> {
         return new Promise( async (resolve, reject) => {
-            await this.logReader.getParsedLog()
-
-            const indecies = [];
-
-            this.logReader.log.forEach((val, index) => {
-                if (val.includes(include)) {
-                    indecies.push(index);
-                }
-            })
-
-            //Get most recent deck list, if it exists
-            if(indecies.length != 0 ) {
-                try {
-                    ref = this.logReader.parseBlock<T>(indecies[indecies.length - 1]);
-                } catch(e) {
-                    try {
-                        ref = this.logReader.parseBlock<T>(indecies[indecies.length - 2]);
-                    } catch(e) {
-                        reject(e);
-                    }
-                }
+            try {
+                ref = this.logReader.parseBlock<T>(this.logReader.map.get(include));
+            } catch(e) {
+                console.error(e);
+                reject(e)
             }
-
-            this.logReader.clearLog();
 
             resolve(ref);
         })

@@ -63,16 +63,14 @@ function createWindow() {
     });
 }
 
-async function init() {
-    //go on secondary thread when starting
-    setTimeout(async () => {
+function init() {
+    logInterpreter.transaction(async () => {
         const currentDecks = await logInterpreter.getLocalDecks();
         const userId = await logInterpreter.getUserId();
 
         await userService.login({username: "cody", password: "monkey571"});
-
         await userService.addDecksToRemote(currentDecks);
-    }, 1);
+    })
 }
 
 try {

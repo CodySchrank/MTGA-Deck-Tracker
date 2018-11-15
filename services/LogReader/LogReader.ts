@@ -7,22 +7,27 @@ const rl = require("readline");
 const fs = require('fs');
 const config: Config = require("./../../config.json");
 const sizeof = require('object-sizeof');
+const HashMap = require('hashmap');
 
 @injectable()
 export class LogReader implements ILogReader {
     /**
-     *  Log Reader should not be injected more than a couple times
+     *  Log Reader should not be injected more than a couple times because it uses alot of memory
      */
     public log: string[] = [];
+    public map: HashMap<string, number> = new HashMap();  //indexes of the hastset
+
     private logUri: string = "";
 
     constructor() {
         this.initLog();
     }
 
-    public getParsedLog(): Promise<string[]> {
+    public getParsedLog(map?: string[]): Promise<string[]> {
         return new Promise( (resolve, reject) => {
             console.time("refreshLog");
+            map = map || [];
+
             this.log = [];
 
             const lineReader = rl.createInterface({
@@ -34,10 +39,20 @@ export class LogReader implements ILogReader {
                 resolve();
             })
 
+            let usefulIndex = 0;
+
             lineReader.on('line', (line) => {
-                const str = (line.toString()).replace(/[\n\r]+/g, ''); //removes CR and newline
+                const str: string = (line.toString()).replace(/[\n\r]+/g, ''); //removes CR and newline
+
                 if (!this.isNullOrEmpty(str)) {
+                    usefulIndex++
                     this.log.push(str);
+
+                    const match = map.filter(s => str.includes(s));
+
+                    if(match.length) {
+                        this.map.set(match[0], usefulIndex);
+                    }
                 }
             });
 
@@ -49,13 +64,12 @@ export class LogReader implements ILogReader {
         });
     }
 
-    clearLog() {
+    clear() {
         this.log = [];
+        this.map.clear();
     }
 
     parseBlock<T>(index: number): T {
-        index += 1; //we dont care about the header
-
         let breaker = this.log[index];
 
         if (breaker == "{") {
