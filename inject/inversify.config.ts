@@ -11,10 +11,13 @@ import { LogReader } from './../services/LogReader/LogReader';
 import { ILogReader } from './../services/LogReader/ILogReader';
 import { Container } from "inversify";
 import { TYPES } from './TYPES';
+import { ILiveLogReader } from "../services/LiveLogReader/ILiveLogReader";
+import { LiveLogReader } from "../services/LiveLogReader/LiveLogReader";
 
 const container = new Container();
 container.bind<ILogInterpreter>(TYPES.ILogInterpreter).to(LogInterpreter);
 container.bind<ILogReader>(TYPES.ILogReader).to(LogReader);
+container.bind<ILiveLogReader>(TYPES.ILogReader).to(LiveLogReader);
 container.bind<IBasicService>(TYPES.IBasicService).to(BasicService);
 container.bind<IUserService>(TYPES.IUserService).to(UserService);
 

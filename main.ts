@@ -5,6 +5,7 @@ import * as url from 'url';
 import { TYPES } from './inject/TYPES';
 import container from './inject/inversify.config';
 import { IUserService } from './services/UserService/IUserService';
+import { ILiveLogReader } from './services/LiveLogReader/ILiveLogReader';
 
 let win, serve;
 const args = process.argv.slice(1);
@@ -12,15 +13,22 @@ serve = args.some(val => val === '--serve');
 
 const logInterpreter = container.get<ILogInterpreter>(TYPES.ILogInterpreter);
 const userService = container.get<IUserService>(TYPES.IUserService);
+const liveLogReader = container.get<ILiveLogReader>(TYPES.ILiveLogReader);
 
 function init() {
     logInterpreter.transaction(async () => {
         const currentDecks = await logInterpreter.getLocalDecks();
         const userId = await logInterpreter.getUserId();
 
-        // await userService.anonymous(userId);
-        // await userService.addDecksToRemote(currentDecks);
+        await userService.anonymous(userId);
+        await userService.addDecksToRemote(currentDecks);
     })
+
+    liveLogReader.startGameSession();
+
+    setTimeout(() => {
+        liveLogReader.endGameSession();
+    }, 30000);
 }
 
 function createWindow() {

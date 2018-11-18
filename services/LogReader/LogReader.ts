@@ -17,7 +17,7 @@ export class LogReader implements ILogReader {
     public log: string[] = [];
     public map: HashMap<string, number> = new HashMap();  //indexes of the hastset
 
-    private logUri: string = "";
+    protected logUri: string = "";
 
     constructor() {
         this.initLog();
@@ -100,7 +100,7 @@ export class LogReader implements ILogReader {
         return JSON.parse(block.join("\n")) as T;
     }
 
-    private initLog() {
+    protected initLog() {
         if (config.UseLocalOutputFile) {
             console.log("Using Local output_log");
             this.logUri = "./output_log.txt"
@@ -123,7 +123,7 @@ export class LogReader implements ILogReader {
         }
     }
 
-    private isNullOrEmpty(str: string) {
+    protected isNullOrEmpty(str: string) {
         return !str || !str.trim();
     }
 }
