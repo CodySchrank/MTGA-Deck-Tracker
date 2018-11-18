@@ -29,7 +29,6 @@ export class LiveLogReader extends LogReader implements ILiveLogReader {
         this.tail.watch();
 
         this.tail.on("line", (data) => {
-            console.log(data);
             this.log.push(data);
             this.liveIndex++
         });

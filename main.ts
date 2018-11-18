@@ -28,7 +28,7 @@ function init() {
 
     setTimeout(() => {
         liveLogReader.endGameSession();
-    }, 1000 * 10);
+    }, 1000 * 20);
 }
 
 function createWindow() {
