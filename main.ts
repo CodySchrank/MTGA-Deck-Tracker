@@ -20,8 +20,12 @@ function init() {
         const currentDecks = await logInterpreter.getLocalDecks();
         const userId = await logInterpreter.getUserId();
 
-        // await userService.anonymous(userId);
-        // await userService.addDecksToRemote(currentDecks);
+        try {
+            await userService.anonymous(userId);
+            await userService.addDecksToRemote(currentDecks);
+        } catch (e) {
+            console.log("Not connected to server!")
+        }
     })
 
     liveLogReader.startGameSession();
