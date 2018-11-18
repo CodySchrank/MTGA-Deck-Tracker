@@ -33,6 +33,20 @@ export class UserService extends BasicService implements IUserService {
         }));
     }
 
+    public anonymous(arenaId: string): Promise<{}> {
+        return new Promise((resolve) => this.req({
+            method: 'GET',
+            uri: `${this.userUrl}/anonymous?arenaId=${arenaId}`,
+            json: true
+        }).then(req => {
+            if(req.auth_token) {
+                this.auth_token = req.auth_token
+                console.log("Set Auth Token");
+                resolve();
+            }
+        }));
+    }
+
     public addDeckToRemote(deck: Deck): Promise<{}> {
         const saveDeck = this.convertDeckToSave(deck);
 

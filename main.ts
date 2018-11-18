@@ -1,7 +1,4 @@
 import { ILogInterpreter } from './services/LogInterpreter/ILogInterpreter';
-import { SaveDeckResource } from './resources/Deck/SaveDeckResource';
-import { UserService } from './services/UserService/UserService';
-import { ILogReader } from './services/LogReader/ILogReader';
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
@@ -15,6 +12,16 @@ serve = args.some(val => val === '--serve');
 
 const logInterpreter = container.get<ILogInterpreter>(TYPES.ILogInterpreter);
 const userService = container.get<IUserService>(TYPES.IUserService);
+
+function init() {
+    logInterpreter.transaction(async () => {
+        const currentDecks = await logInterpreter.getLocalDecks();
+        const userId = await logInterpreter.getUserId();
+
+        await userService.anonymous(userId);
+        await userService.addDecksToRemote(currentDecks);
+    })
+}
 
 function createWindow() {
     init();
@@ -61,16 +68,6 @@ function createWindow() {
         // when you should delete the corresponding element.
         win = null;
     });
-}
-
-function init() {
-    logInterpreter.transaction(async () => {
-        const currentDecks = await logInterpreter.getLocalDecks();
-        const userId = await logInterpreter.getUserId();
-
-        await userService.login({username: "cody", password: "monkey571"});
-        await userService.addDecksToRemote(currentDecks);
-    })
 }
 
 try {
