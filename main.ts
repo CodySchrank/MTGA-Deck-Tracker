@@ -20,15 +20,15 @@ function init() {
         const currentDecks = await logInterpreter.getLocalDecks();
         const userId = await logInterpreter.getUserId();
 
-        await userService.anonymous(userId);
-        await userService.addDecksToRemote(currentDecks);
+        // await userService.anonymous(userId);
+        // await userService.addDecksToRemote(currentDecks);
     })
 
     liveLogReader.startGameSession();
 
     setTimeout(() => {
         liveLogReader.endGameSession();
-    }, 30000);
+    }, 1000 * 10);
 }
 
 function createWindow() {

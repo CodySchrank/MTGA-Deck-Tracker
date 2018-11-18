@@ -22,13 +22,14 @@ export class LiveLogReader extends LogReader implements ILiveLogReader {
     constructor() {
         super();
 
-        this.tail = new Tail(this.logUri);
+        this.tail = new Tail(this.logUri, {separator: /[\r]{0,1}\n/, fromBeginning: false, useWatchFile: true, follow: true, logger: console});
     }
 
     public startGameSession() {
         this.tail.watch();
 
         this.tail.on("line", (data) => {
+            console.log(data);
             this.log.push(data);
             this.liveIndex++
         });

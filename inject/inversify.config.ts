@@ -17,7 +17,7 @@ import { LiveLogReader } from "../services/LiveLogReader/LiveLogReader";
 const container = new Container();
 container.bind<ILogInterpreter>(TYPES.ILogInterpreter).to(LogInterpreter);
 container.bind<ILogReader>(TYPES.ILogReader).to(LogReader);
-container.bind<ILiveLogReader>(TYPES.ILogReader).to(LiveLogReader);
+container.bind<ILiveLogReader>(TYPES.ILiveLogReader).to(LiveLogReader);
 container.bind<IBasicService>(TYPES.IBasicService).to(BasicService);
 container.bind<IUserService>(TYPES.IUserService).to(UserService);
 
