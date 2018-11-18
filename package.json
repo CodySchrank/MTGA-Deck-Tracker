@@ -15,7 +15,7 @@
         "build": "npm run postinstall:electron && npm run electron:serve-tsc && ng build",
         "build:dev": "npm run build -- -c dev",
         "build:prod": "npm run build -- -c production",
-        "copy": "mkdir -p dist && npm-run-all -p copy:root copy:modules copy:static",
+        "copy": "mkdirp dist && npm-run-all -p copy:root copy:modules copy:static",
         "copy:root": "copyfiles *.js *.json dist/",
         "copy:modules": "cd dist/ && npm install && cd ../",
         "copy:static": "copyfiles -a -u static/**/**/* dist/",
@@ -32,7 +32,7 @@
         "test": "npm run postinstall:web && ng test",
         "e2e": "npm run postinstall:web && ng e2e"
     },
-    "devDependencies": {
+    "dependencies": {
         "@angular-devkit/build-angular": "0.10.3",
         "@angular/cli": "7.0.3",
         "@angular/common": "7.0.1",
@@ -91,6 +91,7 @@
         "@types/request-promise": "^4.1.42",
         "hashmap": "^2.3.0",
         "line-by-line": "^0.1.6",
-        "request-promise": "^4.2.2"
+        "request-promise": "^4.2.2",
+        "mkdirp": "^0.5.1"
     }
 }
