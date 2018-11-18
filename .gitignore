@@ -2,6 +2,7 @@
 
 /static/cards/raw
 /scripts
+config.json
 
 # compiled output
 /dist
