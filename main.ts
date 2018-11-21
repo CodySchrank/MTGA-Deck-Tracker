@@ -5,7 +5,6 @@ import * as url from 'url';
 import { TYPES } from './inject/TYPES';
 import container from './inject/inversify.config';
 import { IUserService } from './services/UserService/IUserService';
-import { ILiveLogReader } from './services/LiveLogReader/ILiveLogReader';
 
 let win, serve;
 const args = process.argv.slice(1);
@@ -13,26 +12,23 @@ serve = args.some(val => val === '--serve');
 
 const logInterpreter = container.get<ILogInterpreter>(TYPES.ILogInterpreter);
 const userService = container.get<IUserService>(TYPES.IUserService);
-const liveLogReader = container.get<ILiveLogReader>(TYPES.ILiveLogReader);
 
-function init() {
-    logInterpreter.transaction(async () => {
-        const currentDecks = await logInterpreter.getLocalDecks();
-        const userId = await logInterpreter.getUserId();
+async function init() {
+    setTimeout(async() => {
+        await logInterpreter.init();
 
-        try {
-            await userService.anonymous(userId);
-            await userService.addDecksToRemote(currentDecks);
-        } catch (e) {
-            console.log("Not connected to server!")
-        }
-    })
+        logInterpreter.transaction(async () => {
+            const currentDecks = await logInterpreter.getLocalDecks();
+            const userId = await logInterpreter.getUserId();
 
-    liveLogReader.startGameSession();
-
-    setTimeout(() => {
-        liveLogReader.endGameSession();
-    }, 1000 * 20);
+            try {
+                await userService.anonymous(userId);
+                await userService.addDecksToRemote(currentDecks);
+            } catch (e) {
+                console.log("Not connected to server!")
+            }
+        })
+    }, 500);
 }
 
 function createWindow() {

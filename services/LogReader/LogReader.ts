@@ -1,13 +1,11 @@
 import { Config } from './../../config';
 import { ILogReader } from './ILogReader';
-import * as isDev from "electron-is-dev";
-import * as _ from "underscore";
 import { injectable } from "inversify";
-const rl = require("readline");
 const fs = require('fs');
 const config: Config = require("./../../config.json");
 const sizeof = require('object-sizeof');
 const HashMap = require('hashmap');
+const FastTail = require("fasttail");
 
 @injectable()
 export class LogReader implements ILogReader {
@@ -23,49 +21,39 @@ export class LogReader implements ILogReader {
         this.initLog();
     }
 
-    public getParsedLog(map?: string[]): Promise<string[]> {
+    public startReading(): Promise<{}> {
         return new Promise( (resolve, reject) => {
-            console.time("refreshLog");
-            map = map || [];
-
-            this.log = [];
-
-            const lineReader = rl.createInterface({
-                input: fs.createReadStream(this.logUri)
-            });
-
-            lineReader.on("error", (err) => {
-                this.log = [];
-                resolve();
-            })
-
-            let usefulIndex = 0;
-
-            lineReader.on('line', (line) => {
-                const str: string = (line.toString()).replace(/[\n\r]+/g, ''); //removes CR and newline
-
-                if (!this.isNullOrEmpty(str)) {
-                    usefulIndex++
-                    this.log.push(str);
-
-                    const match = map.filter(s => str.includes(s));
-
-                    if(match.length) {
-                        this.map.set(match[0], usefulIndex);
-                    }
-                }
-            });
-
-            lineReader.on('close', () => {
-                console.log(`Updated log, sizeof: ${sizeof(this.log)} bytes, length: ${this.log.length} lines`);
-                console.timeEnd("refreshLog");
+            const fastTail = new FastTail(this.logUri);
+            fastTail.tailFromBeginning = true;
+            fastTail.tail((line: string) => {
+                this.log.push(line.replace(/[\n\r]+/g, ''));
+            }, () => {
                 resolve();
             })
         });
     }
 
+    public getParsedLog(map?: string[]): Promise<string[]> {
+        return new Promise( (resolve, reject) => {
+            map = map || [];
+            const log = this.log;
+
+            let usefulIndex = 0;
+
+            log.forEach(line => {
+                usefulIndex++;
+                const match = map.filter(s => line.includes(s));
+
+                if(match.length) {
+                    this.map.set(match[0], usefulIndex);
+                }
+            });
+
+            resolve();
+        });
+    }
+
     public clear() {
-        this.log = [];
         this.map.clear();
     }
 

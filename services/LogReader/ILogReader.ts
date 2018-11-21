@@ -4,4 +4,5 @@ export interface ILogReader {
     getParsedLog(map?: string[]): Promise<{}>;
     clear(): void;
     parseBlock<T>(index: number): T;
+    startReading(): Promise<{}>;
 }

@@ -34,7 +34,7 @@ export class UserService extends BasicService implements IUserService {
     }
 
     public anonymous(arenaId: string): Promise<{}> {
-        return new Promise((resolve) => this.req({
+        return new Promise((resolve, reject) => this.req({
             method: 'GET',
             uri: `${this.userUrl}/anonymous?arenaId=${arenaId}`,
             json: true
@@ -44,6 +44,8 @@ export class UserService extends BasicService implements IUserService {
                 console.log("Set Auth Token");
                 resolve();
             }
+        }).catch((e) => {
+            reject(e);
         }));
     }
 
@@ -96,7 +98,7 @@ export class UserService extends BasicService implements IUserService {
     }
 
     private sendAddDeckRequest(body: SaveDeckResource): Promise<{}> {
-        return new Promise((resolve) => this.req({
+        return new Promise((resolve, reject) => this.req({
             method: 'POST',
             uri: `${this.userUrl}/user/deck/mtga`,
             auth: {
@@ -104,11 +106,13 @@ export class UserService extends BasicService implements IUserService {
             },
             body: body,
             json: true
-        }).then(resolve));
+        }).then(resolve).catch((e) => {
+            reject(e);
+        }));
     }
 
     private sendAddDecksRequest(body: SaveDeckResource[]): Promise<{}> {
-        return new Promise((resolve) => this.req({
+        return new Promise((resolve, reject) => this.req({
             method: 'POST',
             uri: `${this.userUrl}/user/decks/mtga`,
             auth: {
@@ -116,6 +120,8 @@ export class UserService extends BasicService implements IUserService {
             },
             body: body,
             json: true
-        }).then(resolve));
+        }).then(resolve).catch((e) => {
+            reject(e);
+        }));
     }
 }

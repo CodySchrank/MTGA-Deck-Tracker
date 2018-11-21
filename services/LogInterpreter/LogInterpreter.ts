@@ -22,6 +22,10 @@ export class LogInterpreter implements ILogInterpreter {
         this.logReader = logReader;
     }
 
+    public init(): Promise<{}> {
+        return this.logReader.startReading();
+    }
+
     /**
      *  All access to the log should be wrapped in transaction
      */
