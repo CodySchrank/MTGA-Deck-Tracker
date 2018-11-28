@@ -64,7 +64,7 @@
         "electron-builder": "20.29.0",
         "electron-is-dev": "^1.0.1",
         "electron-reload": "1.2.5",
-        "fasttail": "^1.3.0",
+        "fasttail": "1.3.1",
         "hashmap": "^2.3.0",
         "inversify": "^5.0.1",
         "jasmine-core": "3.3.0",

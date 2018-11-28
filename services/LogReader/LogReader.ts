@@ -26,13 +26,11 @@ export class LogReader implements ILogReader {
             const fastTail = new FastTail(this.logUri);
             fastTail.tailFromBeginning = true;
 
-            fastTail.tailBlock((lines: string[]) => {
-                lines.forEach(line => {
-                    this.log.push(line.replace(/[\n\r]+/g, ''));
-                });
-
+            fastTail.tail((line: string) => {
+                this.log.push(line.replace(/[\n\r]+/g, ''));
+            }, () => {
                 resolve();
-            });
+            })
         });
     }
 
