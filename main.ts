@@ -15,7 +15,9 @@ const userService = container.get<IUserService>(TYPES.IUserService);
 
 async function init() {
     setTimeout(async() => {
+        console.time("Init")
         await logInterpreter.init();
+        console.timeEnd("Init")
 
         logInterpreter.transaction(async () => {
             const currentDecks = await logInterpreter.getLocalDecks();
